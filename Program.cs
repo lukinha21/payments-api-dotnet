@@ -22,11 +22,11 @@ if (env == "Development")
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile(pathAppsettings)
+    .AddEnvironmentVariables() // permite definir stringConexao por variÃ¡vel de ambiente
     .Build();
 
-// Configuração do Serilog
+// ConfiguraÃ§Ã£o do Serilog
 var connectionString = config["stringConexao"];
-Console.WriteLine($"Connection String: {connectionString}"); // Para depuração
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -47,12 +47,12 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICartaoService, CartaoService>();
-builder.Services.AddScoped<ITransacaoService, TransacaoService>(); // Certifique-se de ter esse serviço
+builder.Services.AddScoped<ITransacaoService, TransacaoService>(); // Certifique-se de ter esse serviÃ§o
 
-// Configuração do DbContext
+// ConfiguraÃ§Ã£o do DbContext
 builder.Services.AddDbContext<PagamentoDbContext>(options =>
     options.UseMySql(connectionString,
-                     new MySqlServerVersion(new Version(8, 0, 21)))); // Altere a versão conforme necessário
+                     new MySqlServerVersion(new Version(8, 0, 21)))); // Altere a versÃ£o conforme necessÃ¡rio
 
 // Configurar o Swagger
 #region Habilitando o uso do Swagger (OPENAPI)
@@ -65,7 +65,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = $@"<h3>Gerenciamento <b>da API de pagamentos</b></h3>
                         <p>
-                            Documentação da API de pagamentos....
+                            DocumentaÃ§Ã£o da API de pagamentos....
                         </p>",
     });
 
@@ -82,10 +82,10 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-    c.RoutePrefix = ""; //habilitar a página inicial da API ser a doc.
+    c.RoutePrefix = ""; //habilitar a pÃ¡gina inicial da API ser a doc.
     c.DocumentTitle = "API de Pagamentos - API V1";
 });
-// Configure o pipeline de requisições
+// Configure o pipeline de requisiÃ§Ãµes
 app.UseAuthorization();
 app.MapControllers();
 
